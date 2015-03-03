@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect,request,url_for
 from data_grab import Scraper
 import pickle
 import investigate
-app = Flask(__name__)
+from investa_gator import app
 
 @app.route("/",methods=["GET","POST"])
 def index():
@@ -44,4 +44,3 @@ def add_data():
         pickle.dump( train, open("train.p","wb") )
     return redirect(url_for("index"))
 
-app.run(debug=True)

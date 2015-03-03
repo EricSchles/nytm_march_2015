@@ -16,7 +16,13 @@
 
 Investa_gator makes use of machine learning, web scraping, and internal knowledge to find instances of human trafficking.  The assumption is law enforcement is getting the information it needs, hence this tool will help find more instances in order to build a case against those assumed to be traffickers.
 
-What you'll need to run my code:
+##How to start the server:
+
+python run.py 
+
+(run.py can be found at the top level directory)
+
+##What you'll need to run my code:
 
 [syncano v3](https://github.com/Syncano/syncano-python)
 
