@@ -7,6 +7,9 @@ from syncano import client
 import datetime
 import json
 from textblob.classifiers import NaiveBayesClassifier as NBC
+from textblob.classifiers import DecisionTreeClassifier as DTC
+
+from textblob import TextBlob
 import os
 from postmark import PMMail
 import pickle
@@ -80,7 +83,7 @@ class Scraper:
         values["phone_number"] = ''
         return values
     
-    def scrape(self,links=[],auto_learn=False,long_running=False):
+    def scrape(self,links=[],auto_learn=False,long_running=False,translator=False):
         responses = []
         values = {}
         data = []
@@ -133,16 +136,41 @@ class Scraper:
             except IndexError:
                 values["posted_at"] = "not given"
             values["scraped_at"] = str(datetime.datetime.now())
+            body_blob = TextBlob(values["text_body"])
+            title_blob = TextBlob(values["title"])
+            values["language"] = body_blob.detect_language() #requires the internet - makes use of google translate api
+            values["polarity"] = body_blob.polarity
+            values["subjectivity"] = body_blob.sentiment[1]
+            translated = translator or values["language"] == "es"
+            if translated:
+                values["translated_body"] = body_blob.translate(from_lang="es")
+                values["translated_title"] = title_blob.translate(from_lang="es")
+            else:
+                values["translated_body"] = "none"
+                values["translated_title"] = "none"
+            text_body = values["text_body"]
+            title = values["title"]
+
+            if translated:
+                text_body = values["translated_body"]
+                title = values["translated_title"]
 
             if auto_learn:
                 train = pickle.load(open("train.p","rb"))
-                cl = NBC(train)
-                if cl.classify(values["text_body"]) == "trafficking":
+                cls = []
+                cls.append(NBC(train))
+                cls.append(DTC(train))
+                #increase this number
+                trk_count = 0
+                for cl in cls:
+                    if cl.classify(text_body) == "trafficking":
+                        trk_count += 1
+
+                if float(trk_count)/len(cls) > 0.5:
                     train = pickle.load(open("train.p","rb"))
                     train.append((values["text_body"],"trafficking") )
                     pickle.dump(train,open("train.p","wb"))
                     values["trafficking"] = "found"
-                    
                 else:
                     values["trafficking"] = "not_found"
                 #To do set up postmark here.
@@ -154,21 +182,27 @@ class Scraper:
                            
             values["child_urls"] = []
             for keyword in self.child_keywords:
-                if keyword in values["text_body"]:
+                if keyword in text_body:
                     values["child_urls"].append(values["link"])
-                elif keyword in values["title"]:
+                elif keyword in title:
                     values["child_urls"].append(values["link"])
 
             values["trafficking_urls"] = []
             for keyword in self.trafficking_keywords:
-                if keyword in values["text_body"]:
+                if keyword in text_body:
                     values["trafficking_urls"].append(values["link"])
-                elif keyword in values["title"]:
+                elif keyword in title:
                     values["trafficking_urls"].append(values["link"])
 
-            values["new_keywords"].append(self.pull_keywords(values["text_body"]))
-            values["new_keywords"].append(self.pull_keywords(values["title"]))
-            data.append(self.phone_number_parse(values))        
+            values["new_keywords"].append(self.pull_keywords(text_body))
+            values["new_keywords"].append(self.pull_keywords(title))
+            values = self.phone_number_parse(values)
+            numbers = pickle.load(open("numbers.p","rb"))
+            values["network"] = []
+            for network in numbers.keys():
+                if values["phone_number"] in numbers[network]:
+                    values["network"].append(network)
+            data.append(values)
         self.save_ads(data)
         return data
 
@@ -196,7 +230,13 @@ class Scraper:
                     posted_at = datum["posted_at"],
                     scraped_at=datum["scraped_at"],
                     flagged_for_child_trafficking=json.dumps(datum["child_urls"]),
-                    flagged_for_trafficking=json.dumps(datum["trafficking_urls"])
+                    flagged_for_trafficking=json.dumps(datum["trafficking_urls"]),
+                    language=datum["language"],
+                    polarity=datum["polarity"],
+                    translated_body=datum["translated_body"],
+                    translated_title=datum["translated_title"],
+                    subjectivity=datum["subjectivity"],
+                    network=json.dumps(datum["network"])
                 )
     
 if __name__ == '__main__':

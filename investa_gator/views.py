@@ -10,6 +10,12 @@ def index():
     #keywords found
     return render_template("index.html")
 
+@app.route("/run",methods=["GET","POST"])
+def run():
+    scraper = Scraper()
+    data = scraper.scrape(auto_learn=True)
+    return redirect(url_for("index"))
+
 @app.route("/investigate",methods=["GET","POST"])
 def investigator():
     password = request.form.get("password")
@@ -24,6 +30,16 @@ def investigator():
 @app.route("/add",methods=["GET","POST"])
 def add():
     return render_template("add.html")
+
+@app.route("/add_numbers",methods=["GET","POST"])
+def add_numbers():
+    numbers = pickle.load( open("numbers.p","rb") )
+    network = request.form.get("network")
+    number = request.form.get("number")
+    if not network in numbers.keys():
+        numbers[network] = []
+    numbers[network].append(number)
+    return redirect(url_for("index"))
 
 @app.route("/add_data",methods=["GET","POST"])
 def add_data():

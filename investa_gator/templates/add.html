@@ -4,6 +4,24 @@
 </head>
 <body>
 
+<h2>Add new phone numbers to look for</h2>
+<form method="post" action="{{url_for('add_numbers')}}">
+<table>
+<tr>
+ <td><label>phone number</label></td>
+ <td><input type="text" name="number"></td>
+<tr>
+ <td><label>Network</label></td>
+ <td><input type="text" name="network"></td>
+</tr>
+<tr>
+ <td><input type="submit" value="add phone numbers"></td>
+</tr>
+</table>
+
+
+</form>
+<h2>Add new advertisements to analyze</h2>
 <form method="post" action="{{url_for('add_data')}}">
 <table>
  <tr>

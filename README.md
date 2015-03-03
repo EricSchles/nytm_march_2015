@@ -27,6 +27,10 @@ python run.py
 
 (run.py can be found at the top level directory)
 
+##Example non gross website to test out:
+
+http://newyork.backpage.com/AdultJobs/midtown-spa-looking-for-nice-girls/36076717
+
 ##What you'll need to run my code:
 
 [syncano v3](https://github.com/Syncano/syncano-python)

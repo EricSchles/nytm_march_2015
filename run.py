@@ -1,3 +1,3 @@
 from investa_gator import app
 
-app.run()
+app.run(debug=True)
