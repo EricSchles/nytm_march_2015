@@ -19,18 +19,32 @@ Investa_gator makes use of machine learning, web scraping, and internal knowledg
 What you'll need to run my code:
 
 [syncano v3](https://github.com/Syncano/syncano-python)
+
 --Simply fork the repo and install OR enter a terminal and type `sudo pip install syncano --pre`
+
 [requests](http://docs.python-requests.org/en/latest/)
+
 --install with `sudo pip install requests`
+
 [flask](http://flask.pocoo.org/)
+
 --install with `sudo pip install flask`
+
 [lxml](http://lxml.de/)
+
 --install with `sudo pip install lxml`
+
 [unidecode](https://pypi.python.org/pypi/Unidecode)
+
 --install with `sudo pip install unidecode`
+
 [textblob](http://textblob.readthedocs.org/en/dev/)
+
 --install with [these instructions](http://stevenloria.com/how-to-build-a-text-classification-system-with-python-and-textblob/)
+
 [postmark](https://postmarkapp.com/)
+
 --install with `sudo pip install python-postmark` - this is a future dependency :)
+
 
 
