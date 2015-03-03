@@ -5,6 +5,7 @@
 ##Intro - The Problem
 
 * [A personal story](http://www.cracked.com/article_21538_5-things-i-learned-as-sex-slave-in-modern-america.html)
+* [some statistics](http://www.havocscope.com/tag/human-trafficking/)
 
 *In case you are interested:
 	* [international statistics](http://www.unodc.org/unodc/en/human-trafficking/global-report-on-trafficking-in-persons.html)
